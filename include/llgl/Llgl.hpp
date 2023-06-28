@@ -10,7 +10,12 @@ public:
     Llgl(std::string name, Size size);
     ~Llgl();
 
+    bool init();
+    void run();
+
 private:
+    bool glfwInit();
+    bool loadGlad();
 
 };
 

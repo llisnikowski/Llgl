@@ -2,6 +2,7 @@
 #include <string>
 #include "llgl/Size.hpp"
 
+struct GLFWwindow;
 
 namespace llgl
 {
@@ -17,9 +18,14 @@ public:
     Size getSize() const;
     void setSize(Size size);
 
+protected:
+    bool init();
+    GLFWwindow* getWindow(){return this->window;}
+
 private:
     std::string name;
     Size size;
+    GLFWwindow* window;
 
 };
 
