@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include "llgl/Size.hpp"
+#include "llgl/Color.hpp"
 
 struct GLFWwindow;
 
@@ -17,6 +18,8 @@ public:
     void setName(std::string name);
     Size getSize() const;
     void setSize(Size size);
+    Color getBackgroundColor() const;
+    void setBackgroundColor(Color color);
 
 protected:
     bool init();
@@ -25,6 +28,7 @@ protected:
 private:
     std::string name;
     Size size;
+    Color color;
     GLFWwindow* window;
 
 };

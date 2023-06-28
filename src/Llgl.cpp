@@ -46,7 +46,8 @@ void Llgl::run()
 	if(Window::getWindow() == nullptr) return;
 	while (!glfwWindowShouldClose(Window::getWindow()))
     {
-        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+		const Color &color = this->Window::getBackgroundColor();
+        glClearColor(color.r, color.g, color.b, color.alpha);
         glClear(GL_COLOR_BUFFER_BIT);
 
         glfwSwapBuffers(Window::getWindow());
