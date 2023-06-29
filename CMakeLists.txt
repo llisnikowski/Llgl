@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_compile_options(
-    -Wall -Wextra -Wpedantic -Werror
+    -Wall -Wextra -Werror
     -Wno-error=unused-function -Wno-error=unused-variable
     -Wno-unused-parameter -Wno-sign-compare
 )
@@ -18,6 +18,7 @@ find_package(glfw3 REQUIRED)
 
 file(GLOB SOURCES
     "src/*.cpp"
+    "glad/src/*.c"
 )
 
 add_library(Llgl STATIC ${SOURCES})
@@ -27,6 +28,7 @@ PUBLIC
     ${PROJECT_SOURCE_DIR}/include
     PRIVATE
     ${OPENGL_INCLUDE_DIRS}
+    ${PROJECT_SOURCE_DIR}/glad/include
 )
 
 target_link_libraries(${PROJECT_NAME}

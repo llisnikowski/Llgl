@@ -35,6 +35,11 @@ PRIVATE
     gtest gtest_main Llgl
 )
 
+target_include_directories(${PROJECT_NAME} 
+PRIVATE
+    ${PROJECT_SOURCE_DIR}/../glad/include
+)
+
 add_test(
     NAME ${PROJECT_NAME} 
     COMMAND ${PROJECT_NAME} 
