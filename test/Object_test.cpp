@@ -1,6 +1,16 @@
 #include <gtest/gtest.h>
 #include <llgl/Llgl.hpp>
 #include <llgl/Object.hpp>
+#include <llgl/Attribute.hpp>
+
+class BufforMock
+{
+public:
+	void *getArray(){return nullptr;}
+    std::size_t arraySize(){return 0;};
+
+	llgl::AttributesList getAttributeList(){return {};}
+};
 
 class Object_test : public ::testing::Test
 {
@@ -16,12 +26,20 @@ public:
 
 TEST_F(Object_test, MultiObject)
 {
-	llgl::Object<int> object1;
-	llgl::Object<int> object2;
+	llgl::Object<BufforMock> object1{BufforMock{}};
+	llgl::Object<BufforMock> object2{BufforMock{}};
 	EXPECT_NE(object1.getVao(), object2.getVao());
+	EXPECT_NE(object1.getVbo(), object2.getVbo());
 }
 
 TEST_F(Object_test, vaoSize)
 {
-	EXPECT_EQ(sizeof(decltype(llgl::Object<int>().getVao())), 4);
+	EXPECT_EQ(sizeof(decltype(llgl::Object<BufforMock>(BufforMock{}) \
+		.getVbo())), 4);
+}
+
+TEST_F(Object_test, vboSize)
+{
+	EXPECT_EQ(sizeof(decltype(llgl::Object<BufforMock>(BufforMock{}) \
+		.getVbo())), 4);
 }
