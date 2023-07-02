@@ -16,7 +16,7 @@ public:
     uint32_t getVao();
 
 private:
-    uint32_t vao;
+    uint32_t vao{};
 };
 
 
@@ -25,7 +25,7 @@ private:
 template <typename T>
 Object<T>::Object()
 {
-	glCreateBuffers(1, &this->vao);
+	glCreateVertexArrays(1, &this->vao);
 }
 
 template <typename T>
