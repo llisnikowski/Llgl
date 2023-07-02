@@ -10,6 +10,11 @@ Llgl::Llgl(std::string name, Size size)
 {
 }
 
+Llgl::Llgl()
+:Window{}
+{
+}
+
 Llgl::~Llgl()
 {
 	glfwTerminate();
@@ -18,8 +23,9 @@ Llgl::~Llgl()
 bool Llgl::init()
 {
 	if(this->glfwInit() == false) return false;
-	if(this->Window::init() == false) return false;
-	return this->loadGlad();
+	bool ret = true;
+	if(this->Window::init() == false) ret = false;
+	return ret && this->loadGlad();
 }
 
 bool Llgl::glfwInit()

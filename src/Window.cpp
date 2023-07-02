@@ -10,8 +10,14 @@ Window::Window(std::string name, Size size)
 {
 }
 
+Window::Window()
+:name{}, size{}, color{}, window{nullptr}
+{
+}
+
 bool Window::init()
 {
+    if(size.width <= 0 || size.height <= 0) return false;
     this->window = glfwCreateWindow(size.width, size.height, name.c_str(), nullptr, nullptr);
     if(this->window == nullptr) return false;
 

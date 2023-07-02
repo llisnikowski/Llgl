@@ -12,6 +12,7 @@ class Window
 {
 public:
     Window(std::string name, Size size);
+    Window();
     virtual ~Window() = default;
 
     std::string getName() const;
