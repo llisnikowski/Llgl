@@ -16,12 +16,12 @@ public:
 
 TEST_F(Object_test, MultiObject)
 {
-	llgl::Object object1;
-	llgl::Object object2;
+	llgl::Object<int> object1;
+	llgl::Object<int> object2;
 	EXPECT_NE(object1.getVao(), object2.getVao());
 }
 
 TEST_F(Object_test, vaoSize)
 {
-	EXPECT_EQ(sizeof(decltype(llgl::Object().getVao())), 4);
+	EXPECT_EQ(sizeof(decltype(llgl::Object<int>().getVao())), 4);
 }
