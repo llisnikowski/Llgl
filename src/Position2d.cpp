@@ -1,4 +1,4 @@
-#include "llgl/Point2d.hpp"
+#include "llgl/Position2d.hpp"
 
 namespace llgl {
 
