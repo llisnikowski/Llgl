@@ -37,3 +37,13 @@ TEST(Position2d_test, equalityOperator)
 	EXPECT_FALSE((llgl::Position2d{0.3, 0.6} == llgl::Position2d{0.4, 0.6}));
 	EXPECT_FALSE((llgl::Position2d{0.3, 0.6} == llgl::Position2d{0.5, 0.6}));
 }
+
+TEST(Position2d_test, argsNumber)
+{
+	EXPECT_EQ(llgl::Position2d::argsNumber(), 2);
+}
+
+TEST(Position2d_test, argsType)
+{
+	EXPECT_EQ(llgl::Position2d::argsType(), GL_FLOAT);
+}

@@ -13,7 +13,6 @@ public:
 
     static constexpr std::size_t argsNumber();
     static constexpr GLenum argsType();
-    static constexpr std::size_t argsFullSize();
 
     float x;
     float y;
@@ -24,6 +23,20 @@ public:
 constexpr Position2d::Position2d(float x, float y)
 :x{x}, y{y}
 {}
+
+
+
+constexpr std::size_t Position2d::argsNumber()
+{
+    return sizeof(Position2d) / sizeof(float);
+}
+
+constexpr GLenum Position2d::argsType()
+{
+    return GL_FLOAT;
+}
+
+
 
 } // namespace llgl
 

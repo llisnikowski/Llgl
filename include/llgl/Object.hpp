@@ -25,7 +25,7 @@ public:
 private:
     template <std::size_t I = 0>
     void addAttributes();
-    template <typename T, std::size_t Ii>
+    template <typename T, std::size_t I>
     std::size_t attributOffset();
 
     uint32_t vao{};
@@ -46,7 +46,7 @@ Object<Atribs...>::Object(AttributesList attributesList)
 	glCreateBuffers(1, &this->vbo);
     glNamedBufferStorage(this->vbo, this->attributesList.size() * sizeof(Attributes), this->attributesList.data(), 0);
 
-    addAttributes();
+    this->addAttributes<0>();
 }
 
 template <typename... Atribs>
@@ -60,14 +60,14 @@ template <typename... Atribs>
 template <std::size_t I>
 void Object<Atribs...>::addAttributes()
 {
-    using AtribTyp = std::tuple_element_t<I, std::tuple<int, int>>;
+    using AtribTyp = std::tuple_element_t<I, Attributes>;
     glEnableVertexArrayAttrib(this->vao, I);
     glVertexArrayAttribFormat(this->vao, I, AtribTyp::argsNumber()
     , AtribTyp::argsType(), GL_FALSE, 0);
-    glVertexArrayVertexBuffer(this->vao, I, this->vbo, this->attributOffset<AtribTyp, I>, AtribTyp::argsFullSize());
+    glVertexArrayVertexBuffer(this->vao, I, this->vbo, this->attributOffset<Attributes, I>(), sizeof(AtribTyp));
     glVertexArrayAttribBinding(this->vao, I, I);
 
-    if(I + 1 < std::tuple_size<Attributes>()) this->addAttributes<I+1>();
+    if constexpr(I + 1 < std::tuple_size<Attributes>()) this->addAttributes<I+1>();
 }
 
 
@@ -75,7 +75,7 @@ template <typename... Atribs>
 template <typename T, std::size_t I>
 std::size_t Object<Atribs...>::attributOffset()
 {
-    return (char*)std::get<I>((T*)nullptr) - (char*)nullptr;
+    return (char*)&std::get<I>(*(T*)nullptr) - (char*)nullptr;
 }
 
 template <typename... Atribs>
