@@ -3,6 +3,7 @@
 #include <utility>
 #include "glad/glad.h"
 #include <GLFW/glfw3.h>
+#include <string>
 
 namespace llgl {
 
@@ -13,7 +14,8 @@ public:
 
     static constexpr std::size_t argsNumber();
     static constexpr GLenum argsType();
-
+    static std::string getName();
+    
     float x;
     float y;
 };
@@ -23,8 +25,6 @@ public:
 constexpr Position2d::Position2d(float x, float y)
 :x{x}, y{y}
 {}
-
-
 
 constexpr std::size_t Position2d::argsNumber()
 {
@@ -37,15 +37,15 @@ constexpr GLenum Position2d::argsType()
 }
 
 
-
 } // namespace llgl
 
 constexpr bool operator==(llgl::Position2d lhs, llgl::Position2d rhs);
-
 
 
 constexpr bool operator==(llgl::Position2d lhs, llgl::Position2d rhs)
 {
     return lhs.x == rhs.x && lhs.y == rhs.y;
 }
+
+
 
