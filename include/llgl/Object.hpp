@@ -5,15 +5,10 @@
 #include <vector>
 #include <tuple>
 #include "llgl/VertexBuffor.hpp"
+#include "llgl/ObjectBase.hpp"
 
 namespace llgl
 {
-
-class ObjectBase
-{
-public:
-    virtual void draw() = 0;
-};
 
 template <typename ...Ts>
 class Object : public ObjectBase
@@ -22,14 +17,12 @@ public:
     Object(std::vector<std::tuple<Ts...>> ts);
     virtual ~Object();
 
-    uint32_t getVao();
     uint32_t getVbo();
 
     void draw() override;
 
 private:
 
-    uint32_t vao{};
     VertexBuffor<Ts...> vertexBuffer;
 };
 
@@ -40,22 +33,14 @@ template <typename ...Ts>
 Object<Ts...>::Object(std::vector<std::tuple<Ts...>> ts)
 :vertexBuffer{std::move(ts)}
 {
-	glCreateVertexArrays(1, &this->vao);
-
     this->vertexBuffer.init(this->vao);
 }
 
 template <typename ...Ts>
 Object<Ts...>::~Object()
 {
-	glDeleteVertexArrays(1, &this->vao);
 }
 
-template <typename ...Ts>
-uint32_t Object<Ts...>::getVao()
-{
-	return this->vao;
-}
 
 template <typename ...Ts>
 uint32_t Object<Ts...>::getVbo()
@@ -66,7 +51,7 @@ uint32_t Object<Ts...>::getVbo()
 template <typename ...Ts>
 void Object<Ts...>::draw()
 {
-	
+	glDrawArrays(GL_TRIANGLES, 0, vertexBuffer.bufforLength());
 }
 
 
