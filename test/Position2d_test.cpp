@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include <llgl/Position2d.hpp>
+#include <llgl/Utils.hpp>
 
 TEST(Position2d_test, EmptyConstructor)
 {
@@ -21,12 +22,13 @@ TEST(Position2d_test, sizeMember)
 {
 	EXPECT_EQ(sizeof(llgl::Position2d::x), 4);
 	EXPECT_EQ(sizeof(llgl::Position2d::y), 4);
+	EXPECT_EQ(sizeof(llgl::Position2d), 8);
 }
 
 TEST(Position2d_test, offsetMember)
 {
-	EXPECT_EQ(offsetof(llgl::Position2d, x), 0);
-	EXPECT_EQ(offsetof(llgl::Position2d, y), sizeof(float));
+	EXPECT_EQ(llgl::offsetOf(&llgl::Position2d::x), 0);
+	EXPECT_EQ(llgl::offsetOf(&llgl::Position2d::y), sizeof(float));
 }
 
 TEST(Position2d_test, equalityOperator)
@@ -46,4 +48,9 @@ TEST(Position2d_test, argsNumber)
 TEST(Position2d_test, argsType)
 {
 	EXPECT_EQ(llgl::Position2d::argsType(), GL_FLOAT);
+}
+
+TEST(Position2d_test, getName)
+{
+	EXPECT_STREQ(llgl::Position2d::getName().c_str(), "position2d");
 }
