@@ -16,6 +16,7 @@ Pipeline::~Pipeline()
 
 void Pipeline::setShaders(std::shared_ptr<Shaders> shaders)
 {
+	this->shaders = shaders;
 	setShader(shaders->getVertex(), GL_VERTEX_SHADER_BIT);
 	setShader(shaders->getFragment(), GL_FRAGMENT_SHADER_BIT);
 }
@@ -29,6 +30,11 @@ void Pipeline::setShader(uint32_t shaderId, GLbitfield stages)
 void Pipeline::bind()
 {
 	glBindProgramPipeline(this->id);
+}
+
+uint32_t Pipeline::getId()
+{
+	return this->id;
 }
 
 

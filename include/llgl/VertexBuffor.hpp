@@ -48,7 +48,8 @@ VertexBuffor<Ts...>::VertexBuffor(Buffor &&buffor)
 template <typename... Ts>
 VertexBuffor<Ts...>::~VertexBuffor()
 {
-    glDeleteBuffers(1, &this->vbo);
+    if(this->vbo) glDeleteBuffers(1, &this->vbo);
+	this->vbo = 0;
 }
 
 template <typename... Ts>
@@ -73,7 +74,7 @@ void VertexBuffor<Ts...>::addAttributes(uint32_t vao)
     glEnableVertexArrayAttrib(vao, I);
     glVertexArrayAttribFormat(vao, I, AttribTyp::argsNumber()
     , AttribTyp::argsType(), GL_FALSE, 0);
-    glVertexArrayVertexBuffer(vao, I, this->vbo, llgl::offsetOf<AttribsTypes, I>(), sizeof(AttribTyp));
+    glVertexArrayVertexBuffer(vao, I, this->vbo, llgl::offsetOf<AttribsTypes, I>(), sizeof(AttribsTypes));
     glVertexArrayAttribBinding(vao, I, I);
 
     if constexpr(I + 1 < std::tuple_size<AttribsTypes>()) this->addAttributes<I+1>(vao);

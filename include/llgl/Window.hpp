@@ -22,9 +22,9 @@ public:
     Color getBackgroundColor() const;
     void setBackgroundColor(Color color);
 
+    GLFWwindow* getWindow(){return this->window;}
 protected:
     bool init();
-    GLFWwindow* getWindow(){return this->window;}
 
 private:
     std::string name;

@@ -6,7 +6,7 @@ namespace llgl
 {
 
 Window::Window(std::string name, Size size)
-:name{std::move(name)}, size{size}, color{1.0, 1.0, 1.0, 1.0}, window{nullptr}
+:name{std::move(name)}, size{size}, color{1.0, 1.0, 1.0}, window{nullptr}
 {
 }
 
