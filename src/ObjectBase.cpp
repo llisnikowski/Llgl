@@ -2,6 +2,7 @@
 #include "glad/glad.h"
 #include <GLFW/glfw3.h>
 #include "llgl/Pipeline.hpp"
+#include "llgl/IndexBuffer.hpp"
 
 namespace llgl
 {
@@ -24,6 +25,13 @@ void ObjectBase::setPipeline(std::shared_ptr<Pipeline> pipeline)
 std::shared_ptr<Pipeline> ObjectBase::getPipeline()
 {
 	return this->pipeline;
+}
+
+void ObjectBase::setIndexBuffer(std::unique_ptr<IndexBufferBase> &&indexBuffer)
+{
+	this->indexBuffer = std::move(indexBuffer);
+	if(this->indexBuffer == nullptr) return;
+	glVertexArrayElementBuffer(vao, this->indexBuffer->getId());
 }
 
 uint32_t ObjectBase::getVao()
