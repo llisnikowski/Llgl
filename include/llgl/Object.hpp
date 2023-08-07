@@ -6,6 +6,7 @@
 #include <tuple>
 #include "llgl/VertexBuffor.hpp"
 #include "llgl/ObjectBase.hpp"
+#include "llgl/IndexBufferBase.hpp"
 
 namespace llgl
 {
@@ -52,7 +53,12 @@ template <typename ...Ts>
 void Object<Ts...>::draw()
 {
     this->bind();
-	glDrawArrays(GL_TRIANGLES, 0, vertexBuffer.bufforLength());
+    if(this->indexBuffer == nullptr){
+        glDrawArrays(GL_TRIANGLES, 0, vertexBuffer.bufforLength());
+    }
+    else{
+        glDrawElements(GL_TRIANGLES, this->indexBuffer->getLength(), this->indexBuffer->getType(), nullptr);
+    }
 }
 
 
