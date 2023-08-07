@@ -26,9 +26,9 @@ add_library(Llgl STATIC ${SOURCES})
 target_include_directories(${PROJECT_NAME} 
 PUBLIC
     ${PROJECT_SOURCE_DIR}/include
-    PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/glad/include
+PRIVATE
     ${OPENGL_INCLUDE_DIRS}
-    ${PROJECT_SOURCE_DIR}/glad/include
 )
 
 target_link_libraries(${PROJECT_NAME}

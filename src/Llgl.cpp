@@ -1,12 +1,18 @@
 #include "llgl/Llgl.hpp"
 #include "glad/glad.h"
 #include <GLFW/glfw3.h>
+#include <llgl/ObjectBase.hpp>
 
 namespace llgl
 {
 
 Llgl::Llgl(std::string name, Size size)
 :Window{std::move(name), size}
+{
+}
+
+Llgl::Llgl()
+:Window{}
 {
 }
 
@@ -18,8 +24,9 @@ Llgl::~Llgl()
 bool Llgl::init()
 {
 	if(this->glfwInit() == false) return false;
-	if(this->Window::init() == false) return false;
-	return this->loadGlad();
+	bool ret = true;
+	if(this->Window::init() == false) ret = false;
+	return ret && this->loadGlad();
 }
 
 bool Llgl::glfwInit()
@@ -47,13 +54,24 @@ void Llgl::run()
 	while (!glfwWindowShouldClose(Window::getWindow()))
     {
 		const Color &color = this->Window::getBackgroundColor();
-        glClearColor(color.r, color.g, color.b, color.alpha);
+        glClearColor(color.r, color.g, color.b, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
+
+		for(auto &object : this->objects){
+			auto objectLock = object.lock();
+			if(objectLock == nullptr) continue;
+			objectLock->draw();
+		}
 
         glfwSwapBuffers(Window::getWindow());
         glfwPollEvents();
     }
 }
 
+void Llgl::addObject(std::shared_ptr<ObjectBase> object)
+{
+	if(object == nullptr) return;
+	this->objects.push_back(object);
+}
 
 } // namespace llgl
