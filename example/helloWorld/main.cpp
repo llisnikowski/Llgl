@@ -29,8 +29,6 @@ int main(int argc, char *argv[])
     pipeline->setShaders(shaders);
     object->setPipeline(pipeline);
 
-    object->bind();
-
     llgl.addObject(object);
 
     llgl.run();

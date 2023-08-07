@@ -51,6 +51,7 @@ uint32_t Object<Ts...>::getVbo()
 template <typename ...Ts>
 void Object<Ts...>::draw()
 {
+    this->bind();
 	glDrawArrays(GL_TRIANGLES, 0, vertexBuffer.bufforLength());
 }
 
