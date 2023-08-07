@@ -21,6 +21,11 @@ void ObjectBase::setPipeline(std::shared_ptr<Pipeline> pipeline)
 	this->pipeline = pipeline;
 }
 
+std::shared_ptr<Pipeline> ObjectBase::getPipeline()
+{
+	return this->pipeline;
+}
+
 uint32_t ObjectBase::getVao()
 {
 	return this->vao;
