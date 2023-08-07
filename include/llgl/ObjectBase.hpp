@@ -15,6 +15,7 @@ public:
     uint32_t getVao();
 
 	void setPipeline(std::shared_ptr<Pipeline> pipeline);
+	std::shared_ptr<Pipeline> getPipeline();
 
     virtual void draw() = 0;
 	void bind();

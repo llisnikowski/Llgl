@@ -3,27 +3,6 @@
 #include "llgl/Object.hpp"
 #include "llgl/Position2d.hpp"
 
-// class AttributeMock
-// {
-// public:
-// 	static constexpr std::size_t argsNumber();
-//     static constexpr GLenum argsType();
-// 	static std::string getName();
-// 	int i[3];
-// };
-
-// constexpr std::size_t AttributeMock::argsNumber()
-// {
-// 	return sizeof(AttributeMock) / sizeof(int);
-// }
-// constexpr GLenum AttributeMock::argsType()
-// {
-// 	return GL_INT;
-// }
-// std::string AttributeMock::getName()
-// {
-// 	return "AttributeMock";
-// }
 
 class Object_test : public ::testing::Test
 {
