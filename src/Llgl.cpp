@@ -1,7 +1,8 @@
 #include "llgl/Llgl.hpp"
 #include "glad/glad.h"
 #include <GLFW/glfw3.h>
-#include <llgl/ObjectBase.hpp>
+#include "llgl/ObjectBase.hpp"
+#include "llgl/Uniform.hpp"
 
 namespace llgl
 {
@@ -57,6 +58,12 @@ void Llgl::run()
         glClearColor(color.r, color.g, color.b, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
+		for(auto &uniform : this->updateTickUniforms){
+			auto uniformLock = uniform.lock();
+			if(uniformLock == nullptr) continue;
+			uniformLock->update();
+		}
+
 		for(auto &object : this->objects){
 			auto objectLock = object.lock();
 			if(objectLock == nullptr) continue;
@@ -72,6 +79,11 @@ void Llgl::addObject(std::shared_ptr<ObjectBase> object)
 {
 	if(object == nullptr) return;
 	this->objects.push_back(object);
+}
+
+void Llgl::addToTickUpdater(std::shared_ptr<UniformBase> uniform)
+{
+	this->updateTickUniforms.push_back(uniform);
 }
 
 } // namespace llgl

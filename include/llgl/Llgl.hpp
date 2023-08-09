@@ -6,6 +6,7 @@
 namespace llgl
 {
 class ObjectBase;
+class UniformBase;
 
 class Llgl : public Window
 {
@@ -18,12 +19,14 @@ public:
     void run();
 
     void addObject(std::shared_ptr<ObjectBase> object);
+    void addToTickUpdater(std::shared_ptr<UniformBase> uniform);
 
 private:
     bool glfwInit();
     bool loadGlad();
 
     std::vector<std::weak_ptr<ObjectBase>> objects;
+    std::vector<std::weak_ptr<UniformBase>> updateTickUniforms;
 
 };
 
