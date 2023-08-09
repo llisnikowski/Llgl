@@ -5,8 +5,17 @@
 #include "llgl/Color.hpp"
 #include "llgl/Shaders.hpp"
 #include "llgl/Pipeline.hpp"
+#include "llgl/IndexBuffer.hpp"
+#include "llgl/Uniform.hpp"
 #include <vector>
 #include <tuple>
+#include <chrono>
+#include <cmath>
+
+using Clock = std::chrono::high_resolution_clock;
+using TimePoint = Clock::time_point;
+using Duration = std::chrono::duration<float, std::ratio<1, 1>>;
+
 
 int main(int argc, char *argv[])
 {
@@ -16,9 +25,9 @@ int main(int argc, char *argv[])
 
     auto object = std::make_shared<llgl::Object<llgl::Position2d, llgl::Color>>(
         std::vector<std::tuple<llgl::Position2d, llgl::Color>>{
-            {{-0.5, -0.5}, llgl::Color::red()},
-            {{0.5, -0.5}, {0.0, 1.0, 0.0}},
-            {{0, 0.7}, {0.0f, 0.0f, 1.0f}}
+            {{-0.3, -0.3}, {1.0, 0.0, 0.0}},
+            {{0.3, -0.3}, {0.0, 1.0, 0.0}},
+            {{0.3, 0.3}, {0.0f, 0.0f, 1.0f}}
         }
     );
 
@@ -28,6 +37,32 @@ int main(int argc, char *argv[])
     if(!shaders->loadFragment("./../fs.frag")) return 2;
     pipeline->setShaders(shaders);
     object->setPipeline(pipeline);
+
+    {       // --- | Uniforms | ---
+        // static
+        auto constOffsetUniform = std::make_shared<llgl::Uniform<float, 2>>(
+            std::array<float, 2>{-0.2, 0.4}
+        );
+        shaders->addUniform(constOffsetUniform);
+
+        // dynamic
+        auto dynamicOffsetUniform = std::make_shared<llgl::Uniform<float, 1>>(
+            std::array<float, 1>{0}
+        );
+        shaders->addUniform(dynamicOffsetUniform);
+
+        const TimePoint tpStart = Clock::now();
+        constexpr float radius = 0.3f;
+        constexpr float speed = 2;
+        dynamicOffsetUniform->setUpdateFunction([tpStart, radius](std::array<float, 1> &array)
+        {
+            const float time = std::chrono::duration_cast<Duration>
+                                    (Clock::now() - tpStart).count();
+            array[0] = std::cos(time * speed) * radius;
+            return true;
+        });
+        llgl.addToTickUpdater(dynamicOffsetUniform);
+    }
 
     llgl.addObject(object);
 
