@@ -15,23 +15,20 @@ class Uniform : public UniformBase
 {
 public:
 	using GlFunction = void(*)(uint32_t shader, int location, int count, const T *value);
-	using UpdateFunc = std::function<bool(std::array<T, N> &array)>;
 
 	Uniform();
 	Uniform(std::array<T, N> array);
-	void setUpdateFunction(UpdateFunc updateFunct);
-	void update() override;
 
 	void set(std::array<T, N> value);
 
 protected:
+	void update() override;
 	void updateShaders(uint32_t shader, int location) override;
 
 private:
 	GlFunction getGlFunction();
 
 	std::array<T, N> array;
-	UpdateFunc updateFunct{};
 };
 
 
@@ -89,16 +86,8 @@ auto Uniform<T,N>::getGlFunction() -> GlFunction
 }
 
 template <typename T, std::size_t N>
-void Uniform<T,N>::setUpdateFunction(UpdateFunc updateFunct)
-{
-	this->updateFunct = updateFunct;
-}
-
-template <typename T, std::size_t N>
 void Uniform<T,N>::update()
 {
-	if(this->updateFunct == nullptr) return;
-	if(this->updateFunct(array) == false) return;
 	updateAllShaders();
 }
 
