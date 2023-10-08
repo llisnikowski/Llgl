@@ -22,6 +22,8 @@ public:
 	void setUpdateFunction(UpdateFunc updateFunct);
 	void update() override;
 
+	void set(std::array<T, N> value);
+
 protected:
 	void updateShaders(uint32_t shader, int location) override;
 
@@ -97,6 +99,13 @@ void Uniform<T,N>::update()
 {
 	if(this->updateFunct == nullptr) return;
 	if(this->updateFunct(array) == false) return;
+	updateAllShaders();
+}
+
+template <typename T, std::size_t N>
+void Uniform<T,N>::set(std::array<T, N> value)
+{
+	this->array = value;
 	updateAllShaders();
 }
 

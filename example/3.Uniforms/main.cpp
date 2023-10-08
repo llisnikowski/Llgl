@@ -11,6 +11,7 @@
 #include <tuple>
 #include <chrono>
 #include <cmath>
+#include "llgl/Matrix.hpp"
 
 using Clock = std::chrono::high_resolution_clock;
 using TimePoint = Clock::time_point;
@@ -51,18 +52,26 @@ int main(int argc, char *argv[])
         );
         shaders->addUniform(dynamicOffsetUniform);
 
-        const TimePoint tpStart = Clock::now();
         constexpr float radius = 0.3f;
         constexpr float speed = 2;
-        dynamicOffsetUniform->setUpdateFunction([tpStart, radius](std::array<float, 1> &array)
-        {
-            const float time = std::chrono::duration_cast<Duration>
-                                    (Clock::now() - tpStart).count();
-            array[0] = std::cos(time * speed) * radius;
-            return true;
+        llgl.addTickUpdateFunc([dynamicOffsetUniform, radius, speed](const llgl::TickInfo &timeInfo){
+            dynamicOffsetUniform->set({std::cos(timeInfo.currentTimePoint * speed) * radius});
         });
-        llgl.addToTickUpdater(dynamicOffsetUniform);
+
+        // const TimePoint tpStart = Clock::now();
+        // constexpr float radius = 0.3f;
+        // constexpr float speed = 2;
+        // dynamicOffsetUniform->setUpdateFunction([tpStart, radius](std::array<float, 1> &array)
+        // {
+        //     const float time = std::chrono::duration_cast<Duration>
+        //                             (Clock::now() - tpStart).count();
+        //     array[0] = std::cos(time * speed) * radius;
+        //     return true;
+        // });
+        // llgl.addToTickUpdater(dynamicOffsetUniform);
     }
+
+    llgl::Matrix<2, 3> mat;
 
     llgl.addObject(object);
 
