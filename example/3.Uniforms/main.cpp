@@ -58,17 +58,6 @@ int main(int argc, char *argv[])
             dynamicOffsetUniform->set({std::cos(timeInfo.currentTimePoint * speed) * radius});
         });
 
-        // const TimePoint tpStart = Clock::now();
-        // constexpr float radius = 0.3f;
-        // constexpr float speed = 2;
-        // dynamicOffsetUniform->setUpdateFunction([tpStart, radius](std::array<float, 1> &array)
-        // {
-        //     const float time = std::chrono::duration_cast<Duration>
-        //                             (Clock::now() - tpStart).count();
-        //     array[0] = std::cos(time * speed) * radius;
-        //     return true;
-        // });
-        // llgl.addToTickUpdater(dynamicOffsetUniform);
     }
 
     llgl::Matrix<2, 3> mat;
