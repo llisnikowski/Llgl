@@ -20,3 +20,18 @@ TEST(Color_test, floatConstructor)
 	EXPECT_TRUE((color == llgl::Color{0.4f, 0.2f, 0.8f}));
 }
 
+TEST(Color_test, attributInfo)
+{
+	EXPECT_EQ(llgl::Color::argsNumber(), 3);
+	EXPECT_EQ(llgl::Color::argsType(), GL_FLOAT);
+	EXPECT_STREQ(llgl::Color::getName().c_str(), "color");
+}
+
+TEST(Color_test, colors)
+{
+	EXPECT_TRUE((llgl::Color::white() == llgl::Color{1, 1, 1}));
+	EXPECT_TRUE((llgl::Color::black() == llgl::Color{}));
+	EXPECT_TRUE((llgl::Color::red() == llgl::Color{1, 0, 0}));
+	EXPECT_TRUE((llgl::Color::green() == llgl::Color{0, 1, 0}));
+	EXPECT_TRUE((llgl::Color::blue() == llgl::Color{0, 0, 1}));
+}
