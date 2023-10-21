@@ -61,3 +61,20 @@ TEST(Matrix_test, constructorValues)
         }
     }
 }
+
+TEST(Matrix_test, identyMatrix)
+{
+    constexpr llgl::Matrix<3, 3> m;
+    constexpr llgl::Matrix<3, 2> m2;
+
+    for(int row = 0; row < 3; row++){
+        for(int col = 0; col < 3; col++){
+            EXPECT_FLOAT_EQ(m[row][col], row == col ? 1.f : 0.f);
+        }
+    }
+    for(int row = 0; row < 3; row++){
+        for(int col = 0; col < 2; col++){
+            EXPECT_FLOAT_EQ(m2[row][col], 0.f);
+        }
+    }
+}

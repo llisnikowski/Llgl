@@ -36,7 +36,13 @@ private:
 template <size_t W, size_t H>
 constexpr Matrix<W, H>::Matrix()
 :array{}
-{}
+{
+    if constexpr(W == H){
+        for(int i = 0; i < W; i++){
+            array[i][i] = 1.0f;
+        }
+    }
+}
 
 template <size_t W, size_t H>
 constexpr Matrix<W, H>::Matrix(Array array)
