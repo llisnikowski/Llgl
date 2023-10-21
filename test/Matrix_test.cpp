@@ -78,3 +78,34 @@ TEST(Matrix_test, identyMatrix)
         }
     }
 }
+
+TEST(Matrix_test, Multiplication)
+{
+    constexpr llgl::Matrix<4, 3> m1{
+        1, 2, 3,
+        4, 5, 6,
+        7, 8, 9,
+        10, 11, 12
+    };
+    constexpr llgl::Matrix<3, 2> m2{
+        1, 2,
+        3, 4,
+        5, 6
+    };
+
+    llgl::Matrix<4, 2> expect{
+        1*1 + 2*3 + 3*5, 1*2 + 2*4 + 3*6,
+        4*1 + 5*3 + 6*5, 4*2 + 5*4 + 6*6,
+        7*1 + 8*3 + 9*5, 7*2 + 8*4 + 9*6,
+        10*1 + 11*3 + 12*5, 10*2 + 11*4 + 12*6,
+    };
+
+    llgl::Matrix<4, 2> result = m1 * m2;
+
+    for(int row = 0; row < 4; row++){
+        for(int col = 0; col < 2; col++){
+            EXPECT_FLOAT_EQ(result[row][col], expect[row][col]);
+        }
+    }
+
+}

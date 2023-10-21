@@ -1,6 +1,7 @@
 #pragma once
 #include <array>
 #include <type_traits>
+#include <functional>
 
 namespace llgl 
 {
@@ -25,12 +26,16 @@ public:
     const float *cbegin() const;
     const float *cend() const;
 
+    using IteratorFunc = std::function<void(float &value, size_t col, size_t row)>;
+    constexpr void foreach(IteratorFunc fun);
+
 private:
     template <std::size_t pos, typename ...Ts>
     constexpr void fill(float t, Ts... ts);
 
     Array array;
 };
+
 
 
 template <size_t W, size_t H>
@@ -105,6 +110,35 @@ constexpr void Matrix<W, H>::fill(float t, Ts... ts)
     } 
 }
 
-
+template <size_t W, size_t H>
+constexpr void Matrix<W, H>::foreach(IteratorFunc func)
+{
+    for(int row = 0; row < W; row++){
+        for(int col = 0; col < H; col++){
+            func(array[row][col], row, col);
+        }
+    }
+}
 
 } // namespace llgl
+
+
+template <size_t W1, size_t H1, size_t W2, size_t H2>
+auto operator *(llgl::Matrix<W1, H1> lhs, llgl::Matrix<W2, H2> rhs);
+
+
+template <size_t W1, size_t H1, size_t W2, size_t H2>
+auto operator *(llgl::Matrix<W1, H1> lhs, llgl::Matrix<W2, H2> rhs)
+{
+    static_assert(H1 == W2);
+    llgl::Matrix<W1, H2> mat;
+    mat.foreach([&lhs, &rhs](float &value, size_t row, size_t col)
+    {
+        float sum = 0;
+        for(int i = 0; i < H1; i++){
+            sum += lhs[row][i] * rhs[i][col];
+        }
+        value = sum;
+    });
+    return mat;
+}
