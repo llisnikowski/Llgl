@@ -44,7 +44,8 @@ public:
     using IteratorFunc = std::function<void(float &value, size_t col, size_t row)>;
     constexpr void foreach(IteratorFunc fun);
 
-    void transform(Vector<3> vec);
+    decltype(auto) transform(Vector<3> vec);
+    decltype(auto) scale(Vector<3> vec);
 
     template <size_t ROW2, size_t COL2>
     constexpr auto operator *(const llgl::Matrix<ROW2, COL2> &rhs) const;
@@ -167,7 +168,7 @@ constexpr void Matrix<ROW, COL>::foreach(IteratorFunc func)
 }
 
 template <size_t ROW, size_t COL>
-void Matrix<ROW, COL>::transform(Vector<3> vec)
+decltype(auto) Matrix<ROW, COL>::transform(Vector<3> vec)
 {
     static_assert(ROW == 4 && COL == 4);
     for(int i = 0; i < 3; i++){
@@ -175,8 +176,22 @@ void Matrix<ROW, COL>::transform(Vector<3> vec)
                     + array[i][1] * vec[1][0]
                     + array[i][2] * vec[2][0];
     }
+    return *this;
 }
 
+template <size_t ROW, size_t COL>
+decltype(auto) Matrix<ROW, COL>::scale(Vector<3> vec)
+{
+    static_assert(ROW == 4 && COL == 4);
+    this->operator*=(
+        Matrix<4, 4>{{
+        vec[0][0], 0, 0, 0,
+        0, vec[1][0], 0, 0,
+        0, 0, vec[2][0], 0,
+        0, 0, 0, 1
+    }});
+    return *this;
+}
 
 template <size_t ROW, size_t COL>
 template <size_t ROW2, size_t COL2>

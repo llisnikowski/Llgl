@@ -178,3 +178,28 @@ TEST(Matrix_test, tranform)
         }
     }
 }
+TEST(Matrix_test, scale)
+{  
+    llgl::Matrix<4, 4> mat{{
+        1, 2, 3, 4,
+        5, 6, 7, 8,
+        9, 10, 11, 12,
+        13, 14, 15, 16
+    }};
+
+    llgl::Matrix<4, 4> expect = mat 
+    * llgl::Matrix<4, 4> {{
+        -2, 0, 0, 0,
+        0, 3, 0, 0,
+        0, 0, 5, 0,
+        0, 0, 0, 1
+    }};
+    mat.scale(llgl::Vector<3>{{-2, 3, 5}});
+
+
+    for(int row = 0; row < 4; row++){
+        for(int col = 0; col < 4; col++){
+            EXPECT_FLOAT_EQ(mat[row][col], expect[row][col]);
+        }
+    }
+}
