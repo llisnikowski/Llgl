@@ -6,6 +6,13 @@
 namespace llgl 
 {
 
+
+template <size_t ROW, size_t COL>
+class Matrix;
+
+template <size_t ROW>
+using Vector = Matrix<ROW, 1>;
+
 template <size_t ROW, size_t COL>
 class Matrix
 {
@@ -37,15 +44,14 @@ public:
     using IteratorFunc = std::function<void(float &value, size_t col, size_t row)>;
     constexpr void foreach(IteratorFunc fun);
 
+    void transform(Vector<3> vec);
+
 private:
     template <std::size_t pos, typename ...Ts>
     constexpr void fill(float t, Ts... ts);
 
     Array array;
 };
-
-template <size_t ROW>
-using Vector = Matrix<ROW, 1>;
 
 
 template <size_t ROW, size_t COL>
@@ -151,6 +157,18 @@ constexpr void Matrix<ROW, COL>::foreach(IteratorFunc func)
         }
     }
 }
+
+template <size_t ROW, size_t COL>
+void Matrix<ROW, COL>::transform(Vector<3> vec)
+{
+    static_assert(ROW == 4 && COL == 4);
+    for(int i = 0; i < 3; i++){
+        array[i][3] += array[i][0] * vec[0][0] 
+                    + array[i][1] * vec[1][0]
+                    + array[i][2] * vec[2][0];
+    }
+}
+
 
 } // namespace llgl
 

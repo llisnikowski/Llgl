@@ -131,3 +131,28 @@ TEST(Matrix_test, vector)
     }
 
 }
+
+TEST(Matrix_test, tranform)
+{  
+    llgl::Matrix<4, 4> mat{{
+        1, 2, 3, 4,
+        5, 6, 7, 8,
+        9, 10, 11, 12,
+        13, 14, 15, 16
+    }};
+
+    mat.transform(llgl::Vector<3>{{-2, 3, 5}});
+
+    constexpr llgl::Matrix<4, 4> expect{{
+        1, 2, 3, (1*-2 + 2*3 + 3*5 + 4),
+        5, 6, 7, (5*-2 + 6*3 + 7*5 + 8),
+        9, 10, 11, (9*-2 + 10*3 + 11*5 + 12),
+        13, 14, 15, 16
+    }};
+
+    for(int row = 0; row < 4; row++){
+        for(int col = 0; col < 4; col++){
+            EXPECT_FLOAT_EQ(mat[row][col], expect[row][col]);
+        }
+    }
+}
