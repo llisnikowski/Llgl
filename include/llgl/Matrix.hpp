@@ -46,6 +46,14 @@ public:
 
     void transform(Vector<3> vec);
 
+    template <size_t ROW2, size_t COL2>
+    constexpr auto operator *(const llgl::Matrix<ROW2, COL2> &rhs) const;
+    template <size_t ROW2, size_t COL2>
+    constexpr auto operator *(llgl::Matrix<ROW2, COL2> &&rhs) const;
+
+    constexpr auto operator *=(const llgl::Matrix<ROW, COL> &rhs);
+    constexpr auto operator *=(llgl::Matrix<ROW, COL> &&rhs);
+
 private:
     template <std::size_t pos, typename ...Ts>
     constexpr void fill(float t, Ts... ts);
@@ -170,31 +178,25 @@ void Matrix<ROW, COL>::transform(Vector<3> vec)
 }
 
 
-} // namespace llgl
-
-
-template <size_t ROW1, size_t COL1, size_t ROW2, size_t COL2>
-auto operator *(llgl::Matrix<ROW1, COL1> lhs, llgl::Matrix<ROW2, COL2> rhs);
-
-
-template <size_t ROW1, size_t COL1, size_t ROW2, size_t COL2>
-auto operator *(llgl::Matrix<ROW1, COL1> lhs, llgl::Matrix<ROW2, COL2> rhs)
+template <size_t ROW, size_t COL>
+template <size_t ROW2, size_t COL2>
+constexpr auto Matrix<ROW, COL>::operator *(const llgl::Matrix<ROW2, COL2> &rhs) const
 {
-    static_assert(COL1 == ROW2 || (COL1 > ROW2 && COL2 == 1));
-    llgl::Matrix<ROW1, COL2> mat;
-    mat.foreach([&lhs, &rhs](float &value, size_t row, size_t col)
+    static_assert(COL == ROW2 || (COL > ROW2 && COL2 == 1));
+    llgl::Matrix<ROW, COL2> mat;
+    mat.foreach([this, &rhs](float &value, size_t row, size_t col)
     {
         float sum = 0;
-        for(int i = 0; i < COL1; i++){
-            if constexpr (COL1 == ROW2){
-                sum += lhs[row][i] * rhs[i][col];
+        for(int i = 0; i < COL; i++){
+            if constexpr (COL == ROW2){
+                sum += array[row][i] * rhs[i][col];
             }
             else {
                 if(i < ROW2){
-                    sum += lhs[row][i] * rhs[i][col];
+                    sum += array[row][i] * rhs[i][col];
                 }
                 else{
-                    sum += lhs[row][i];
+                    sum += array[row][i];
                 }
             }
         }
@@ -202,3 +204,51 @@ auto operator *(llgl::Matrix<ROW1, COL1> lhs, llgl::Matrix<ROW2, COL2> rhs)
     });
     return mat;
 }
+
+template <size_t ROW, size_t COL>
+template <size_t ROW2, size_t COL2>
+constexpr auto Matrix<ROW, COL>::operator *(llgl::Matrix<ROW2, COL2> &&rhs) const
+{
+    static_assert(COL == ROW2 || (COL > ROW2 && COL2 == 1));
+    llgl::Matrix<ROW, COL2> mat;
+    mat.foreach([this, &rhs](float &value, size_t row, size_t col)
+    {
+        float sum = 0;
+        for(int i = 0; i < COL; i++){
+            if constexpr (COL == ROW2){
+                sum += array[row][i] * rhs[i][col];
+            }
+            else {
+                if(i < ROW2){
+                    sum += array[row][i] * rhs[i][col];
+                }
+                else{
+                    sum += array[row][i];
+                }
+            }
+        }
+        value = sum;
+    });
+    return mat;
+}
+
+template <size_t ROW, size_t COL>
+constexpr auto Matrix<ROW, COL>::operator *=(const llgl::Matrix<ROW, COL> &rhs)
+{
+    static_assert((COL == ROW));
+    this->array = (*this * rhs).array;
+    return *this;
+}
+
+template <size_t ROW, size_t COL>
+constexpr auto Matrix<ROW, COL>::operator *=(llgl::Matrix<ROW, COL> &&rhs)
+{
+    static_assert((COL == ROW));
+    this->array = (*this * rhs).array;
+    return *this;
+}
+
+
+} // namespace llgl
+
+

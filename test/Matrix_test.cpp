@@ -107,7 +107,29 @@ TEST(Matrix_test, Multiplication)
             EXPECT_FLOAT_EQ(result[row][col], expect[row][col]);
         }
     }
+}
 
+TEST(Matrix_test, Multiplication2)
+{
+    llgl::Matrix<3, 3> m1{{
+        1, 2, 3,
+        4, 5, 6,
+        7, 8, 9
+    }};
+    constexpr llgl::Matrix<3, 3> m2{{
+        1, 4, 7,
+        2, 5, 8,
+        3, 6, 9
+    }};
+
+    llgl::Matrix<3, 3> expect = m1 * m2;
+    m1 *= m2;
+
+    for(int row = 0; row < 3; row++){
+        for(int col = 0; col < 3; col++){
+            EXPECT_FLOAT_EQ(m1[row][col], expect[row][col]);
+        }
+    }
 }
 
 TEST(Matrix_test, vector)
