@@ -10,16 +10,24 @@ template <size_t ROW, size_t COL>
 class Matrix
 {
 public:
+    static_assert(ROW >= 1 && COL >= 1);
+
     using Row = std::array<float, COL>;
     using Array = std::array<Row, ROW>;
     
     constexpr Matrix();
     constexpr Matrix(Array array);
     template <typename ...Ts>
+    using EnableIfFloat = std::enable_if_t<
+        std::conjunction_v<std::is_convertible_v<Ts, float>...>
+    >;
+    template <typename ...Ts, EnableIfFloat<Ts...>>
     constexpr Matrix(Ts ...ts);
 
     constexpr decltype(auto) operator [](std::size_t pos);
     constexpr decltype(auto) operator [](std::size_t pos) const;
+    constexpr decltype(auto) at(std::size_t pos);
+    constexpr decltype(auto) at(std::size_t pos) const;
 
     float *begin();
     float *end();
@@ -36,6 +44,8 @@ private:
     Array array;
 };
 
+template <size_t ROW>
+using Vector = Matrix<ROW, 1>;
 
 
 template <size_t ROW, size_t COL>
@@ -55,11 +65,11 @@ constexpr Matrix<ROW, COL>::Matrix(Array array)
 {}
 
 template <size_t ROW, size_t COL>
-template <typename ...Ts>
+template <typename ...Ts, Matrix<ROW, COL>::EnableIfFloat<Ts...>>
 constexpr Matrix<ROW, COL>::Matrix(Ts ...ts)
 :array{}
 {
-    static_assert(sizeof...(ts) == ROW * COL);
+    static_assert(sizeof...(ts) == (ROW * COL));
     this->fill<0>(ts...);
 }
 
@@ -73,6 +83,28 @@ template <size_t ROW, size_t COL>
 constexpr decltype(auto) Matrix<ROW, COL>::operator [](std::size_t pos) const
 {
     return array[pos];
+}
+
+template <size_t ROW, size_t COL>
+constexpr decltype(auto) Matrix<ROW, COL>::at(std::size_t pos)
+{
+    if constexpr (COL == 1){
+        return array[pos][0];
+    }
+    else{
+        return array.at(pos);
+    }
+}
+
+template <size_t ROW, size_t COL>
+constexpr decltype(auto) Matrix<ROW, COL>::at(std::size_t pos) const
+{
+    if constexpr (COL == 1){
+        return array[0].at(pos);
+    }
+    else{   
+        return array.at(pos);
+    }
 }
 
 template <size_t ROW, size_t COL>
@@ -130,13 +162,23 @@ auto operator *(llgl::Matrix<ROW1, COL1> lhs, llgl::Matrix<ROW2, COL2> rhs);
 template <size_t ROW1, size_t COL1, size_t ROW2, size_t COL2>
 auto operator *(llgl::Matrix<ROW1, COL1> lhs, llgl::Matrix<ROW2, COL2> rhs)
 {
-    static_assert(COL1 == ROW2);
+    static_assert(COL1 == ROW2 || (COL1 > ROW2 && COL2 == 1));
     llgl::Matrix<ROW1, COL2> mat;
     mat.foreach([&lhs, &rhs](float &value, size_t row, size_t col)
     {
         float sum = 0;
         for(int i = 0; i < COL1; i++){
-            sum += lhs[row][i] * rhs[i][col];
+            if constexpr (COL1 == ROW2){
+                sum += lhs[row][i] * rhs[i][col];
+            }
+            else {
+                if(i < ROW2){
+                    sum += lhs[row][i] * rhs[i][col];
+                }
+                else{
+                    sum += lhs[row][i];
+                }
+            }
         }
         value = sum;
     });
