@@ -2,6 +2,8 @@
 #include <array>
 #include <type_traits>
 #include <functional>
+#include <numeric>
+#include <cmath>
 
 namespace llgl 
 {
@@ -43,6 +45,8 @@ public:
 
     using IteratorFunc = std::function<void(float &value, size_t col, size_t row)>;
     constexpr void foreach(IteratorFunc fun);
+
+    float length();
 
     decltype(auto) transform(Vector<ROW-1> vec);
     decltype(auto) scale(Vector<ROW-1> vec);
@@ -165,6 +169,17 @@ constexpr void Matrix<ROW, COL>::foreach(IteratorFunc func)
             func(array[row][col], row, col);
         }
     }
+}
+
+template <size_t ROW, size_t COL>
+float Matrix<ROW, COL>::length()
+{
+    static_assert(COL == 1);
+    float length = std::accumulate(this->array.begin(), this->array.end()
+    ,float{0.0}, [](float sum, std::array<float, 1> axis){
+        return sum + (axis[0] * axis[0]);
+    });
+    return std::sqrt(length);
 }
 
 template <size_t ROW, size_t COL>

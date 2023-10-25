@@ -151,6 +151,14 @@ TEST(Matrix_test, vector)
             EXPECT_FLOAT_EQ(result[row][col], expect[row][col]);
         }
     }
+}
+
+TEST(Matrix_test, length)
+{
+    llgl::Vector<5> vec{{2, -5, 0.5, -7, 4}};
+
+    EXPECT_FLOAT_EQ(vec.length(), std::sqrt(2*2+5*5+0.5*0.5+7*7+4*4));
+
 
 }
 
