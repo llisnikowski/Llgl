@@ -158,8 +158,20 @@ TEST(Matrix_test, length)
     llgl::Vector<5> vec{{2, -5, 0.5, -7, 4}};
 
     EXPECT_FLOAT_EQ(vec.length(), std::sqrt(2*2+5*5+0.5*0.5+7*7+4*4));
+}
 
+TEST(Matrix_test, unit)
+{
+    llgl::Vector<5> vec{{2, -5, 0.5, -7, 4}};
 
+    llgl::Vector<5> unitVector = vec.getUnit();
+
+    ASSERT_FLOAT_EQ(unitVector.length(), 1.0f);
+    EXPECT_FLOAT_EQ(unitVector.at(0), vec.at(0) / vec.length());
+    EXPECT_FLOAT_EQ(unitVector.at(1), vec.at(1) / vec.length());
+    EXPECT_FLOAT_EQ(unitVector.at(2), vec.at(2) / vec.length());
+    EXPECT_FLOAT_EQ(unitVector.at(3), vec.at(3) / vec.length());
+    EXPECT_FLOAT_EQ(unitVector.at(4), vec.at(4) / vec.length());
 }
 
 TEST(Matrix_test, tranform)

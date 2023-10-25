@@ -48,6 +48,9 @@ public:
 
     float length();
 
+
+    Matrix<ROW, COL> getUnit();
+
     decltype(auto) transform(Vector<ROW-1> vec);
     decltype(auto) scale(Vector<ROW-1> vec);
 
@@ -180,6 +183,19 @@ float Matrix<ROW, COL>::length()
         return sum + (axis[0] * axis[0]);
     });
     return std::sqrt(length);
+}
+
+template <size_t ROW, size_t COL>
+Matrix<ROW, COL> Matrix<ROW, COL>::getUnit()
+{
+    static_assert(COL == 1);
+    float length = this->length();
+    Matrix<ROW, COL> unit;
+    std::transform(this->begin(), this->end(), unit.begin()
+    ,[this, length](float val){
+        return val / length;
+    });
+    return unit;
 }
 
 template <size_t ROW, size_t COL>
