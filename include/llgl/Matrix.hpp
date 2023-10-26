@@ -51,8 +51,14 @@ public:
 
     Matrix<ROW, COL> getUnit();
 
-    decltype(auto) transform(Vector<ROW-1> vec);
-    decltype(auto) scale(Vector<ROW-1> vec);
+    auto transform(Vector<ROW-1> vec);
+    auto scale(Vector<ROW-1> vec);
+    auto rotateDeg(Vector<ROW-1> vec, float degree);
+    auto rotateRad(Vector<ROW-1> vec, float angle);
+    template <size_t AXIS=0>
+    auto rotateDeg(float degree);
+    template <size_t AXIS=0>
+    auto rotateRad(float angle);
 
     template <size_t ROW2, size_t COL2>
     constexpr auto operator *(const llgl::Matrix<ROW2, COL2> &rhs) const;
@@ -199,7 +205,7 @@ Matrix<ROW, COL> Matrix<ROW, COL>::getUnit()
 }
 
 template <size_t ROW, size_t COL>
-decltype(auto) Matrix<ROW, COL>::transform(Vector<ROW-1> vec)
+auto Matrix<ROW, COL>::transform(Vector<ROW-1> vec)
 {
     static_assert(ROW == COL);
     Matrix<ROW, COL> transMat{};
@@ -211,7 +217,7 @@ decltype(auto) Matrix<ROW, COL>::transform(Vector<ROW-1> vec)
 }
 
 template <size_t ROW, size_t COL>
-decltype(auto) Matrix<ROW, COL>::scale(Vector<ROW-1> vec)
+auto Matrix<ROW, COL>::scale(Vector<ROW-1> vec)
 {
     static_assert(ROW == COL);
     Matrix<ROW, COL> scaleMat{};
@@ -219,6 +225,91 @@ decltype(auto) Matrix<ROW, COL>::scale(Vector<ROW-1> vec)
         scaleMat[i][i]= vec[i][0];
     }
     this->operator*=(scaleMat);
+    return *this;
+}
+
+template <size_t ROW, size_t COL>
+auto Matrix<ROW, COL>::rotateDeg(Vector<ROW-1> vec, float degree)
+{
+    static_assert(ROW == COL && ROW == 4);
+    return this->rotateRad(vec, degree / 180 * M_PI);
+}
+
+template <size_t ROW, size_t COL>
+auto Matrix<ROW, COL>::rotateRad(Vector<ROW-1> vec, float angle)
+{
+    static_assert(ROW == COL && ROW == 4);
+    float cosA = std::cos(angle);
+    float sinA = std::sin(angle);
+    Vector<ROW - 1> unitVec = vec.getUnit();
+    float x = unitVec[0][0];
+    float y = unitVec[0][1];
+    float z = unitVec[0][2];
+    Matrix<ROW, COL> rotateMat{{
+        cosA + x*(1-cosA), x*y*(1-cosA) - z*sinA, x*z*(1-cosA) + y*sinA, 0,
+        x*y*(1-cosA) + z*sinA, cosA + y*y*(1-cosA), y*z*(1-cosA) - x*sinA, 0,
+        z*x*(1-cosA) - y*sinA, z*y*(1-cosA) + x*sinA, cosA + z*z*(1-cosA), 0,
+        0, 0, 0, 1
+    }};
+    this->operator*=(rotateMat);
+    return *this;
+}
+
+template <size_t ROW, size_t COL>
+template <size_t AXIS>
+auto Matrix<ROW, COL>::rotateDeg(float degree)
+{
+    static_assert(ROW == COL && (ROW == 4 || ROW == 3));
+    static_assert(AXIS < ROW - 1);
+    return this->rotateRad<AXIS>(degree / 180 * M_PI);
+}
+
+template <size_t ROW, size_t COL>
+template <size_t AXIS>
+auto Matrix<ROW, COL>::rotateRad(float angle)
+{
+    static_assert(ROW == COL && (ROW == 4 || ROW == 3));
+    static_assert(AXIS < ROW - 1);
+    float cosA = std::cos(angle);
+    float sinA = std::sin(angle);
+    if constexpr(ROW == 3){
+        static_assert(AXIS == 0);
+        Matrix<ROW, COL> rotateMat{{
+            cosA, -sinA, 0,
+            sinA, cosA, 0,
+            0, 0, 1
+        }};
+        this->operator*=(rotateMat);
+    }
+    else {
+        if constexpr(AXIS == 0){
+            Matrix<ROW, COL> rotateMat{{
+                1, 0, 0, 0,
+                0, cosA, -sinA, 0,
+                0, sinA, cosA, 0,
+                0, 0, 0, 1
+            }};
+            this->operator*=(rotateMat);
+        }
+        else if constexpr(AXIS == 1){
+            Matrix<ROW, COL> rotateMat{{
+                cosA, 0, sinA, 0,
+                0, 1, 0, 0,
+                -sinA, 0, cosA, 0,
+                0, 0, 0, 1
+            }};
+            this->operator*=(rotateMat);
+        }
+        else if constexpr(AXIS == 2){
+            Matrix<ROW, COL> rotateMat{{
+                cosA, -sinA, 0, 0,
+                sinA, cosA, 0, 0,
+                0, 0, 1, 0,
+                0, 0, 0, 1
+            }};
+            this->operator*=(rotateMat);
+        }
+    }
     return *this;
 }
 

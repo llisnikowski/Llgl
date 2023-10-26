@@ -223,3 +223,135 @@ TEST(Matrix_test, scale)
         }
     }
 }
+TEST(Matrix_test, rotate)
+{  
+    llgl::Matrix<4, 4> mat{{
+        1, 2, 3, 4,
+        5, 6, 7, 8,
+        9, 10, 11, 12,
+        13, 14, 15, 16
+    }};
+
+    llgl::Matrix<4, 4> expect = mat 
+    * llgl::Matrix<4, 4> {{
+        0, 0, 1, 0,
+        0, 1, 0, 0,
+        -1, 0, 0, 0,
+        0, 0, 0, 1
+    }};
+    mat.rotateDeg(llgl::Vector<3>{{0, 5, 0}}, 90);
+
+    for(int row = 0; row < 4; row++){
+        for(int col = 0; col < 4; col++){
+            EXPECT_FLOAT_EQ(mat[row][col], expect[row][col]);
+        }
+    }
+}
+TEST(Matrix_test, rotate2d)
+{  
+    llgl::Matrix<3, 3> mat{{
+        1, 2, 3, 
+        4, 5, 6,
+        7, 8, 9,
+    }};
+
+    float deg = 53.0f;
+
+    llgl::Matrix<3, 3> expect = mat 
+    * llgl::Matrix<3, 3> {{
+        std::cos((float)(deg*M_PI/180.f)), -std::sin((float)(deg*M_PI/180.0f)), 0,
+        std::sin((float)(deg*M_PI/180.f)), std::cos((float)(deg*M_PI/180.0f)), 0,
+        0, 0, 1
+    }};
+    mat.rotateDeg<0>(deg);
+
+    for(int row = 0; row < 3; row++){
+        for(int col = 0; col < 3; col++){
+            EXPECT_FLOAT_EQ(mat[row][col], expect[row][col]);
+        }
+    }
+}
+TEST(Matrix_test, rotateX)
+{  
+    llgl::Matrix<4, 4> mat{{
+        1, 2, 3, 4,
+        5, 6, 7, 8,
+        9, 10, 11, 12,
+        13, 14, 15, 16
+    }};
+
+    float deg = 70.0f;
+    float sinA = std::sin(deg/180.0*M_PI);
+    float cosA = std::cos(deg/180.0*M_PI);
+
+    llgl::Matrix<4, 4> expect = mat 
+    * llgl::Matrix<4, 4> {{
+        1, 0, 0, 0,
+        0, cosA, -sinA, 0,
+        0, sinA, cosA, 0,
+        0, 0, 0, 1
+    }};
+    mat.rotateDeg<0>(deg);
+
+    for(int row = 0; row < 4; row++){
+        for(int col = 0; col < 4; col++){
+            EXPECT_FLOAT_EQ(mat[row][col], expect[row][col]);
+        }
+    }
+}
+TEST(Matrix_test, rotateY)
+{  
+    llgl::Matrix<4, 4> mat{{
+        1, 2, 3, 4,
+        5, 6, 7, 8,
+        9, 10, 11, 12,
+        13, 14, 15, 16
+    }};
+
+    float deg = 70.0f;
+    float sinA = std::sin(deg/180.0*M_PI);
+    float cosA = std::cos(deg/180.0*M_PI);
+
+    llgl::Matrix<4, 4> expect = mat 
+    * llgl::Matrix<4, 4> {{
+        cosA, 0, sinA, 0,
+        0, 1, 0, 0,
+        -sinA, 0, cosA, 0,
+        0, 0, 0, 1
+    }};
+    mat.rotateDeg<1>(deg);
+
+    for(int row = 0; row < 4; row++){
+        for(int col = 0; col < 4; col++){
+            EXPECT_FLOAT_EQ(mat[row][col], expect[row][col]);
+        }
+    }
+}
+TEST(Matrix_test, rotateZ)
+{  
+    llgl::Matrix<4, 4> mat{{
+        1, 2, 3, 4,
+        5, 6, 7, 8,
+        9, 10, 11, 12,
+        13, 14, 15, 16
+    }};
+
+    float deg = 70.0f;
+    float sinA = std::sin(deg/180.0*M_PI);
+    float cosA = std::cos(deg/180.0*M_PI);
+
+    llgl::Matrix<4, 4> expect = mat 
+    * llgl::Matrix<4, 4> {{
+        cosA, -sinA, 0, 0,
+        sinA, cosA, 0, 0,
+        0, 0, 1, 0,
+        0, 0, 0, 1
+    }};
+    mat.rotateDeg<2>(deg);
+
+    for(int row = 0; row < 4; row++){
+        for(int col = 0; col < 4; col++){
+            EXPECT_FLOAT_EQ(mat[row][col], expect[row][col]);
+        }
+    }
+}
