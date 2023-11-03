@@ -15,6 +15,7 @@ cmake_policy(SET CMP0072 NEW)
 
 find_package(OpenGL REQUIRED)
 find_package(glfw3 REQUIRED)
+find_package(glm REQUIRED)
 
 file(GLOB SOURCES
     "src/*.cpp"
@@ -35,6 +36,7 @@ target_link_libraries(${PROJECT_NAME}
 PRIVATE
     OpenGL::GL
     glfw
+    glm::glm
 )
 
 add_definitions(${OPENGL_DEFINITIONS})
