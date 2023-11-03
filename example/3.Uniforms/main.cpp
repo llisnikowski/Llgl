@@ -11,7 +11,6 @@
 #include <tuple>
 #include <chrono>
 #include <cmath>
-#include "llgl/Matrix.hpp"
 
 using Clock = std::chrono::high_resolution_clock;
 using TimePoint = Clock::time_point;
@@ -59,8 +58,6 @@ int main(int argc, char *argv[])
         });
 
     }
-
-    llgl::Matrix<2, 3> mat;
 
     llgl.addObject(object);
 
