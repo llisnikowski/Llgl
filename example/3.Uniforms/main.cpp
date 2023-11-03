@@ -7,11 +7,11 @@
 #include "llgl/Pipeline.hpp"
 #include "llgl/IndexBuffer.hpp"
 #include "llgl/Uniform.hpp"
+#include "llgl/UniformMatrix.hpp"
 #include <vector>
 #include <tuple>
 #include <chrono>
 #include <cmath>
-#include "llgl/Matrix.hpp"
 
 using Clock = std::chrono::high_resolution_clock;
 using TimePoint = Clock::time_point;
@@ -39,6 +39,21 @@ int main(int argc, char *argv[])
     pipeline->setShaders(shaders);
     object->setPipeline(pipeline);
 
+    auto object2 = std::make_shared<llgl::Object<llgl::Position2d, llgl::Color>>(
+        std::vector<std::tuple<llgl::Position2d, llgl::Color>>{
+            {{-0.3, -0.3}, {0.0, 1.0, 1.0}},
+            {{0.3, -0.3}, {1.0, 0.0, 1.0}},
+            {{0, 0.3}, {1.0f, 1.0f, 0.0f}}
+        }
+    );
+
+    auto pipeline2 = std::make_shared<llgl::Pipeline>();
+    auto shaders2 = std::make_shared<llgl::Shaders>();
+    if(!shaders2->loadVertex("./../mat.vert")) return 1;
+    if(!shaders2->loadFragment("./../fs.frag")) return 2;
+    pipeline2->setShaders(shaders2);
+    object2->setPipeline(pipeline2);
+
     {       // --- | Uniforms | ---
         // static
         auto constOffsetUniform = std::make_shared<llgl::Uniform<float, 2>>(
@@ -57,12 +72,22 @@ int main(int argc, char *argv[])
         llgl.addTickUpdateFunc([dynamicOffsetUniform, radius, speed](const llgl::TickInfo &timeInfo){
             dynamicOffsetUniform->set({std::cos(timeInfo.currentTimePoint * speed) * radius});
         });
-
+    }
+    {
+            // --- | Matrix | ---
+        constexpr float speed = 30;
+        auto uniformMatrix = std::make_shared<llgl::UniformMatrix<4, 4>>();
+        shaders2->addUniform(uniformMatrix);
+        llgl.addTickUpdateFunc([uniformMatrix, speed](const llgl::TickInfo &timeInfo){
+            llgl::Mat<4, 4> matrix{1.0f};
+            matrix = llgl::rotate(matrix, llgl::radians(-timeInfo.currentTimePoint*speed), llgl::Vec<3>(0.f, 0.f, 1.f));
+            matrix = llgl::translate(matrix, -llgl::Vec<3>(-0.5f, -0.5f, 0.f));
+            uniformMatrix->set(matrix);
+        });
     }
 
-    llgl::Matrix<2, 3> mat;
-
     llgl.addObject(object);
+    llgl.addObject(object2);
 
     llgl.run();
     return 0;
