@@ -3,9 +3,12 @@
 #include <string>
 #include "glad/glad.h"
 #include <GLFW/glfw3.h>
+#include <vector>
+#include <memory>
 
 namespace llgl
 {
+class UniformBase;
 
 class Shaders
 {
@@ -15,6 +18,7 @@ public:
 
 	bool loadVertex(std::string filename);
 	bool loadFragment(std::string filename);
+	bool addUniform(std::shared_ptr<UniformBase> uniform);
 
 	uint32_t getVertex();
 	uint32_t getFragment();
@@ -25,6 +29,7 @@ private:
 
 	uint32_t vertexId{};
 	uint32_t fragmentId{};
+	std::vector<std::shared_ptr<UniformBase>> uniforms;
 };
 
 

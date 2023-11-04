@@ -1,5 +1,6 @@
 #include "llgl/Shaders.hpp"
 #include <fstream>
+#include "llgl/UniformBase.hpp"
 
 namespace llgl
 {
@@ -13,6 +14,9 @@ Shaders::~Shaders()
 {
 	if(this->vertexId) glDeleteProgram(this->vertexId);
 	if(this->fragmentId) glDeleteProgram(this->fragmentId);
+	for(auto uniform : uniforms){
+		uniform->removeShader(*this);
+	}
 }
 
 bool Shaders::loadVertex(std::string filename)
@@ -69,6 +73,14 @@ uint32_t Shaders::getVertex()
 uint32_t Shaders::getFragment()
 {
 	return this->fragmentId;
+}
+
+bool Shaders::addUniform(std::shared_ptr<UniformBase> uniform)
+{
+	if(uniform == nullptr) return false;
+	uniform->addShader(*this, this->uniforms.size());
+	this->uniforms.push_back(uniform);
+	return true;
 }
 
 } // llgl
